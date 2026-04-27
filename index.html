@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Findigs fast track — McKinley</title>
+<style>
+  /* ── Findigs design tokens ─────────────────────────────────── */
+  :root {
+    --forest:        #212B14;
+    --sand:          #FDFBF7;
+    --key-green:     #8EDE65;
+
+    --neutral-10:    #F5F4EE;
+    --neutral-20:    #EBE9E4;
+    --neutral-30:    #DBDAD5;
+    --neutral-40:    #CCCBC6;
+    --neutral-50:    #B2B1AD;
+    --neutral-60:    #999894;
+    --neutral-70:    #807F7C;
+    --neutral-80:    #666563;
+    --neutral-90:    #4D4C4A;
+    --neutral-100:   #333331;
+
+    --jade-20:       #C2F0DF;
+    --jade-60:       #22C386;
+    --jade-70:       #1A9268;
+
+    --sky-20:        #DDEEFF;
+    --sky-60:        #ADD2FF;
+
+    --sun-20:        #FFF3C4;
+    --sun-60:        #FFCE59;
+
+    --coral-20:      #FFE8D9;
+    --coral-60:      #FFA27A;
+
+    --fg-1:          var(--forest);
+    --fg-2:          var(--neutral-80);
+    --fg-3:          var(--neutral-70);
+    --fg-success:    var(--jade-70);
+    --fg-danger:     #C04128;
+
+    --bg-page:       var(--sand);
+    --bg-surface:    var(--neutral-10);
+    --bg-surface-2:  var(--neutral-20);
+    --border-subtle: var(--neutral-30);
+    --border-default:var(--neutral-40);
+
+    --font-sans: 'Findigs Sans', ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+    --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+    --space-5: 24px;  --space-6: 32px;  --space-7: 48px;  --space-8: 64px;
+
+    --r-md:  12px;
+    --r-lg:  16px;
+    --r-xl:  24px;
+    --r-2xl: 32px;
+    --r-pill: 9999px;
+  }
+
+  /* ── Reset & base ──────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-page);
+    color: var(--fg-1);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--forest); font-weight: 500; }
+  a:hover { opacity: 0.75; }
+
+  strong { font-weight: 700; }
+
+  /* ── Layout shell ──────────────────────────────────────────── */
+  .page-wrapper {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── Top nav ───────────────────────────────────────────────── */
+  .top-nav {
+    grid-column: 1 / -1;
+    background: var(--forest);
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .top-nav img { height: 28px; }
+
+  .top-nav-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(253,251,247,0.2);
+  }
+
+  .top-nav-label {
+    color: rgba(253,251,247,0.7);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Sidebar TOC ───────────────────────────────────────────── */
+  .sidebar {
+    grid-column: 1;
+    background: var(--neutral-10);
+    border-right: 1px solid var(--border-subtle);
+    padding: var(--space-6) var(--space-5);
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+    text-transform: none;
+    margin-bottom: var(--space-4);
+  }
+
+  .toc-list { list-style: none; }
+
+  .toc-section { margin-bottom: var(--space-2); }
+
+  .toc-section-link {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg-1);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .toc-section-link:hover { background: var(--neutral-20); }
+
+  .toc-sub-list { list-style: none; margin-left: var(--space-3); }
+
+  .toc-sub-link {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--fg-2);
+    padding: 3px var(--space-3);
+    border-radius: var(--r-md);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .toc-sub-link:hover { background: var(--neutral-20); color: var(--fg-1); }
+
+  /* ── Main content ──────────────────────────────────────────── */
+  .main-content {
+    grid-column: 2;
+    padding: var(--space-7) var(--space-8);
+    max-width: 880px;
+  }
+
+  /* ── Hero header ───────────────────────────────────────────── */
+  .doc-hero {
+    background: var(--forest);
+    color: var(--sand);
+    border-radius: var(--r-2xl);
+    padding: var(--space-7) var(--space-7);
+    margin-bottom: var(--space-7);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .doc-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: var(--key-green);
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+
+  .doc-hero-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--key-green);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-3);
+  }
+
+  .doc-hero h1 {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+    color: var(--sand);
+  }
+
+  .doc-hero p {
+    font-size: 16px;
+    color: rgba(253,251,247,0.75);
+    max-width: 580px;
+    line-height: 1.6;
+    margin-bottom: var(--space-5);
+  }
+
+  /* ── Key resources card ────────────────────────────────────── */
+  .key-resources {
+    background: var(--bg-surface);
+    border-radius: var(--r-xl);
+    padding: var(--space-5) var(--space-6);
+    margin-bottom: var(--space-7);
+  }
+
+  .key-resources h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-4);
+  }
+
+  .key-resources ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+
+  .key-resources li a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--forest);
+    text-decoration: none;
+  }
+
+  .key-resources li a:hover { text-decoration: underline; }
+
+  .key-resources li a::before {
+    content: '↗';
+    font-size: 12px;
+    color: var(--neutral-60);
+  }
+
+  /* ── Section blocks ────────────────────────────────────────── */
+  .doc-section {
+    margin-bottom: var(--space-8);
+    scroll-margin-top: 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--border-subtle);
+  }
+
+  .section-number {
+    background: var(--key-green);
+    color: var(--forest);
+    font-size: 13px;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--fg-1);
+  }
+
+  /* ── Q&A items ─────────────────────────────────────────────── */
+  .qa-item {
+    margin-bottom: var(--space-5);
+    scroll-margin-top: 80px;
+  }
+
+  .qa-question {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fg-1);
+    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .qa-question::before {
+    content: 'Q';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--neutral-20);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fg-2);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .qa-body {
+    font-size: 15px;
+    color: var(--fg-1);
+    line-height: 1.65;
+    padding-left: 30px;
+  }
+
+  .qa-body p { margin-bottom: var(--space-3); }
+  .qa-body ul, .qa-body ol { padding-left: var(--space-5); margin-bottom: var(--space-3); }
+  .qa-body li { margin-bottom: var(--space-2); }
+  .qa-body li ul { margin-top: var(--space-2); }
+
+  /* ── Callout cards ─────────────────────────────────────────── */
+  .callout {
+    border-radius: var(--r-lg);
+    padding: var(--space-4) var(--space-5);
+    margin: var(--space-4) 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .callout-tip {
+    background: var(--jade-20);
+    border-left: 3px solid var(--jade-60);
+  }
+
+  .callout-warn {
+    background: var(--sun-20);
+    border-left: 3px solid var(--sun-60);
+  }
+
+  .callout-info {
+    background: var(--sky-20);
+    border-left: 3px solid var(--sky-60);
+  }
+
+  .callout-alert {
+    background: var(--coral-20);
+    border-left: 3px solid var(--coral-60);
+  }
+
+  .callout-stat {
+    background: var(--key-green);
+    border-radius: var(--r-lg);
+    padding: var(--space-5);
+    margin: var(--space-4) 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--forest);
+  }
+
+  .callout-stat strong { font-size: 22px; font-weight: 800; }
+
+  /* ── Tags / badges ─────────────────────────────────────────── */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tag-dont { background: var(--coral-20); color: var(--fg-danger); }
+  .tag-escalation { background: var(--jade-20); color: var(--jade-70); }
+  .tag-all { background: var(--neutral-20); color: var(--fg-2); }
+
+  /* ── Tables ────────────────────────────────────────────────── */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--r-xl);
+    margin: var(--space-4) 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead tr {
+    background: var(--forest);
+    color: var(--sand);
+  }
+
+  thead th {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  thead th:first-child { border-radius: var(--r-md) 0 0 0; }
+  thead th:last-child  { border-radius: 0 var(--r-md) 0 0; }
+
+  tbody tr { border-bottom: 1px solid var(--border-subtle); }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:nth-child(even) { background: var(--neutral-10); }
+  tbody tr:nth-child(odd)  { background: var(--sand); }
+
+  tbody tr.row-dont { background: #FFF4F1; }
+
+  td {
+    padding: var(--space-3) var(--space-4);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--fg-1);
+  }
+
+  .ticket-name { font-weight: 600; }
+
+  /* ── Score range visual ────────────────────────────────────── */
+  .score-range {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: var(--space-4) 0;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: 14px;
+  }
+
+  .score-label {
+    width: 160px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: var(--fg-1);
+  }
+
+  .score-bar {
+    height: 10px;
+    border-radius: var(--r-pill);
+    flex: 1;
+  }
+
+  .score-bar-decline   { background: var(--coral-60); }
+  .score-bar-conditional { background: var(--sun-60); }
+  .score-bar-approve   { background: var(--jade-60); }
+
+  .score-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg-2);
+    width: 80px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* ── Steps list ────────────────────────────────────────────── */
+  .steps-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-4); margin: var(--space-4) 0; }
+
+  .step-item {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--neutral-20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg-1);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-body { flex: 1; font-size: 15px; line-height: 1.6; }
+  .step-body strong { font-weight: 700; }
+
+  /* ── Property tables ───────────────────────────────────────── */
+  .property-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin: var(--space-4) 0;
+  }
+
+  .property-col {
+    background: var(--bg-surface);
+    border-radius: var(--r-xl);
+    padding: var(--space-5);
+  }
+
+  .property-col h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg-1);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--key-green);
+  }
+
+  .property-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .property-col li {
+    font-size: 14px;
+    color: var(--fg-1);
+    padding: var(--space-1) 0;
+  }
+
+  /* ── Transfer decision cards ───────────────────────────────── */
+  .transfer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin: var(--space-4) 0;
+  }
+
+  .transfer-card {
+    background: var(--bg-surface);
+    border-radius: var(--r-xl);
+    padding: var(--space-5);
+  }
+
+  .transfer-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg-2);
+    margin-bottom: var(--space-3);
+    letter-spacing: 0.02em;
+  }
+
+  .transfer-card p { font-size: 14px; line-height: 1.6; }
+
+  /* ── Hours display ─────────────────────────────────────────── */
+  .hours-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin: var(--space-3) 0;
+  }
+
+  .hours-card {
+    background: var(--bg-surface);
+    border-radius: var(--r-lg);
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .hours-day { font-size: 13px; font-weight: 600; color: var(--fg-2); }
+  .hours-time { font-size: 18px; font-weight: 700; color: var(--forest); }
+
+  /* ── Income methods ────────────────────────────────────────── */
+  .method-card {
+    background: var(--bg-surface);
+    border-radius: var(--r-xl);
+    padding: var(--space-5) var(--space-6);
+    margin: var(--space-3) 0;
+  }
+
+  .method-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+    color: var(--forest);
+  }
+
+  .method-card p { font-size: 14px; line-height: 1.6; color: var(--fg-1); }
+
+  /* ── Applicant tip cards (end section) ─────────────────────── */
+  .tips-section {
+    background: var(--forest);
+    color: var(--sand);
+    border-radius: var(--r-2xl);
+    padding: var(--space-7);
+    margin-top: var(--space-8);
+  }
+
+  .tips-section h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--key-green);
+    margin-bottom: var(--space-2);
+  }
+
+  .tips-section .tips-subtitle {
+    font-size: 15px;
+    color: rgba(253,251,247,0.7);
+    margin-bottom: var(--space-6);
+  }
+
+  .tips-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .tip-item {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .tip-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--key-green);
+    color: var(--forest);
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tip-body { flex: 1; font-size: 15px; line-height: 1.6; color: var(--sand); }
+  .tip-body strong { color: var(--sand); }
+
+  .tips-footer {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(253,251,247,0.15);
+    font-size: 14px;
+    color: rgba(253,251,247,0.6);
+  }
+
+  /* ── Divider ───────────────────────────────────────────────── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: var(--space-6) 0;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .page-wrapper { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .top-nav, .main-content { grid-column: 1; }
+    .main-content { padding: var(--space-5) var(--space-5); }
+    .property-grid, .transfer-grid, .hours-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ── Top nav ── -->
+  <nav class="top-nav">
+    <img
+      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTM1IiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgMTM1IDQwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIzLjExMyAyNy41NDc3TDExOS4zMzIgMjkuNTg4M0MxMTkuOCAzMC43OTM1IDEyMC43MjEgMzEuNzMwNiAxMjIuMDkzIDMyLjQwMDdDMTIzLjQ2NSAzMy4wNjk3IDEyNS4xNDMgMzMuNDA0OCAxMjcuMTI5IDMzLjQwNDhDMTI5LjQ5NCAzMy40MDQ4IDEzMS4zMTggMzIuOTMwMyAxMzIuNjAyIDMxLjk4MjRDMTMzLjg4MyAzMS4wMzQ1IDEzNC41MjUgMjkuNjkxIDEzNC41MjUgMjcuOTQ5OEMxMzQuNTI1IDI2LjQ1NiAxMzQuMDAxIDI1LjMwMTcgMTMyLjk1MiAyNC40ODY3QzEzMS45MDMgMjMuNjcxOCAxMzAuMjc1IDIzLjE2NDkgMTI4LjA2NyAyMi45NjM4QzEyNi40NiAyMi44MDgyIDEyNS4zNjIgMjIuNjA3MSAxMjQuNzcxIDIyLjM2MThDMTI0LjE4IDIyLjExNjQgMTIzLjg4NSAyMS43MzcxIDEyMy44ODUgMjEuMjIyNkMxMjMuODg1IDIwLjcwODEgMTI0LjExMyAyMC4zMzIgMTI0LjU3IDIwLjA4NTVDMTI1LjAyOCAxOS44NDAyIDEyNS43NDggMTkuNzE3IDEyNi43MjkgMTkuNzE3QzEyNy41OTggMTkuNzE3IDEyOC4zNCAxOS45MTI2IDEyOC45NTQgMjAuMzAyOEMxMjkuNTY4IDIwLjY5MyAxMjkuOTg2IDIxLjIzNDUgMTMwLjIxIDIxLjkyNTFMMTM0LjI5MSAyMC41ODdDMTMzLjg0NSAxOS4yMjYzIDEzMi45MzcgMTguMTU2MiAxMzEuNTY1IDE3LjM3NDhDMTMwLjE5MiAxNi41OTU1IDEyOC41NTggMTYuMjAzMSAxMjYuNjYyIDE2LjIwMzFDMTI0LjQxIDE2LjIwMzEgMTIyLjYzIDE2LjY4OTUgMTIxLjMyNSAxNy42NjAxQzEyMC4wMjEgMTguNjMwNyAxMTkuMzY4IDE5Ljk0MTggMTE5LjM2OCAyMS41OTExQzExOS4zNjggMjMuMTA4NyAxMTkuOTMxIDI0LjI4MDMgMTIxLjA1OCAyNS4xMDVDMTIyLjE4NCAyNS45MzA4IDEyMy44OTYgMjYuNDMzMyAxMjYuMTk0IDI2LjYxMDZDMTI3LjIyIDI2LjcwMDMgMTI4LjAwMSAyNi44MDYyIDEyOC41MzcgMjYuOTI4NEMxMjkuMDczIDI3LjA1MTYgMTI5LjQ1MSAyNy4yMTkxIDEyOS42NzQgMjcuNDI5OUMxMjkuODk2IDI3LjY0MjggMTMwLjAwOSAyNy45Mzc5IDEzMC4wMDkgMjguMzE3M0MxMzAuMDA5IDI5LjM2NjggMTI5LjA3MyAyOS44OTEgMTI3LjE5OCAyOS44OTFDMTI2LjEyNyAyOS44OTEgMTI1LjI0NiAyOS42ODk5IDEyNC41NTUgMjkuMjg3OUMxMjMuODYyIDI4Ljg4NjkgMTIzLjM4MyAyOC4zMDc1IDEyMy4xMTUgMjcuNTQ4OCIgZmlsbD0iI0ZERkJGNyIvPgo8cGF0aCBkPSJNMTEzLjQ3NCAxNi41MzgyTDExMy4xMzkgMTguNjgwNEgxMTMuMDM4QzExMS45MjIgMTcuMDI4OSAxMTAuMjM4IDE2LjIwMzEgMTA3Ljk4NiAxNi4yMDMxQzEwNi40NDcgMTYuMjAzMSAxMDUuMDg1IDE2LjU2MDkgMTAzLjkwMiAxNy4yNzQyQzEwMi43MiAxNy45ODg3IDEwMS44MDYgMTguOTkyOCAxMDEuMTU4IDIwLjI4NTVDMTAwLjUxMSAyMS41ODAzIDEwMC4xODggMjMuMDg2IDEwMC4xODggMjQuODAzNEMxMDAuMTg4IDI2LjUyMDkgMTAwLjUxMSAyOC4wMjc2IDEwMS4xNTggMjkuMzIxNEMxMDEuODA2IDMwLjYxNjIgMTAyLjcyIDMxLjYxOTMgMTAzLjkwMiAzMi4zMzI2QzEwNS4wODQgMzMuMDQ3MSAxMDYuNDQ2IDMzLjQwMzcgMTA3Ljk4NiAzMy40MDM3QzEwOS4wMzQgMzMuNDAzNyAxMDkuOTc3IDMzLjE4NTQgMTEwLjgxMyAzMi43NDk4QzExMS42NSAzMi4zMTUzIDExMi4zNTggMzEuNjc0NCAxMTIuOTM4IDMwLjgyNTlIMTEzLjAzOFYzMi41MzI2QzExMy4wMzggMzMuNzEzOSAxMTIuNjQ4IDM0LjY1MjEgMTExLjg2NiAzNS4zNDI4QzExMS4wODYgMzYuMDM0NSAxMTAuMDE2IDM2LjM4MDQgMTA4LjY1NSAzNi4zODA0QzEwNi40MjMgMzYuMzgwNCAxMDQuOTI4IDM1LjYzMjQgMTA0LjE2OSAzNC4xMzc2TDEwMC42ODkgMzYuNTgxNEMxMDEuNDAyIDM3Ljc0MTIgMTAyLjQwNiAzOC41OTk0IDEwMy43IDM5LjE1NzFDMTA0Ljk5NSAzOS43MTQ4IDEwNi42MjMgMzkuOTkzNyAxMDguNTg2IDM5Ljk5MzdDMTExLjM3NCAzOS45OTM3IDExMy41NTQgMzkuMzQ2MiAxMTUuMTI4IDM4LjA1MzVDMTE2LjcwMiAzNi43NTg3IDExNy40ODggMzQuOTYyMyAxMTcuNDg4IDMyLjY2NTVWMTYuNTM2SDExMy40NzJMMTEzLjQ3NCAxNi41MzgyWk0xMTEuODg0IDI4LjQ2NzVDMTExLjE1OSAyOS4zNDk1IDExMC4xNTEgMjkuNzg5NCAxMDguODU2IDI5Ljc4OTRDMTA3LjYyOSAyOS43ODk0IDEwNi42NTkgMjkuMzQzIDEwNS45NDUgMjguNDUxM0MxMDUuMjMxIDI3LjU1ODUgMTA0Ljg3NCAyNi4zNDM2IDEwNC44NzQgMjQuODA0NUMxMDQuODc0IDIzLjI2NTQgMTA1LjIzMSAyMi4wNDk0IDEwNS45NDUgMjEuMTU3N0MxMDYuNjU5IDIwLjI2NDkgMTA3LjYyOSAxOS44MTk2IDEwOC44NTYgMTkuODE5NkMxMTAuMTUxIDE5LjgxOTYgMTExLjE1OSAyMC4yNjA2IDExMS44ODQgMjEuMTQxNUMxMTIuNjEgMjIuMDIzNSAxMTIuOTczIDIzLjI0MzggMTEyLjk3MyAyNC44MDU2QzExMi45NzMgMjYuMzY3NCAxMTIuNjEgMjcuNTg4OCAxMTEuODg0IDI4LjQ2OTdWMjguNDY3NVoiIGZpbGw9IiNGREZCRjciLz4KPHBhdGggZD0iTTk2LjA3NDMgMTQuNzk2OEM5Ni44MDkzIDE0Ljc5NjggOTcuNDEyNCAxNC41NTE1IDk3Ljg4MTUgMTQuMDU5N0M5OC4zNDk1IDEzLjU2OSA5OC41ODQgMTIuOTQ0MyA5OC41ODQgMTIuMTg1NUM5OC41ODQgMTEuNDI2OCA5OC4zNjE0IDEwLjc5MjMgOTcuOTE1IDEwLjM0NDhDOTcuNDY4NiA5Ljg5OTUyIDk2Ljg1NTggOS42NzU3OCA5Ni4wNzQzIDkuNjc1NzhDOTUuMjkyOSA5LjY3NTc4IDk0LjY1NjIgOS45MTAzMyA5NC4xNjY2IDEwLjM3ODNDOTMuNjc1OSAxMC44NDYzIDkzLjQzMTYgMTEuNDQ5NSA5My40MzE2IDEyLjE4NTVDOTMuNDMxNiAxMi45MjE2IDkzLjY4NjcgMTMuNTQwOSA5NC4yMDEyIDE0LjA0MjRDOTQuNzEzNSAxNC41NDM5IDk1LjMzODMgMTQuNzk1OCA5Ni4wNzU0IDE0Ljc5NTgiIGZpbGw9IiNGREZCRjciLz4KPHBhdGggZD0iTTUyLjk3MzggMTQuNzk2OEM1My43MTEgMTQuNzk2OCA1NC4zMTE5IDE0LjU1MTUgNTQuNzgyMSAxNC4wNTk3QzU1LjI1MDEgMTMuNTY5IDU1LjQ4MzYgMTIuOTQ0MyA1NS40ODM2IDEyLjE4NTVDNTUuNDgzNiAxMS40MjY4IDU1LjI2MDkgMTAuNzkyMyA1NC44MTQ1IDEwLjM0NDhDNTQuMzY4MSA5Ljg5OTUyIDUzLjc1NTMgOS42NzU3OCA1Mi45NzM4IDkuNjc1NzhDNTIuMTkyNCA5LjY3NTc4IDUxLjU1NzkgOS45MTAzMyA1MS4wNjcyIDEwLjM3ODNDNTAuNTc1NCAxMC44NDYzIDUwLjMzMDEgMTEuNDQ5NSA1MC4zMzAxIDEyLjE4NTVDNTAuMzMwMSAxMi45MjE2IDUwLjU4NzMgMTMuNTQwOSA1MS4xMDA3IDE0LjA0MjRDNTEuNjEzIDE0LjU0MzkgNTIuMjM3OCAxNC43OTU4IDUyLjk3MzggMTQuNzk1OCIgZmlsbD0iI0ZERkJGNyIvPgo8cGF0aCBkPSJNOTguMjgzNiAxNi41MzkxSDkzLjc2NTZWMzMuMDY5NUg5OC4yODM2VjE2LjUzOTFaIiBmaWxsPSIjRkRGQkY3Ii8+CjxwYXRoIGQ9Ik0zOS45OTA2IDMzLjA2OTlINDQuNTA4NlYyMC4yODY3SDUwLjY2NTFWMzMuMDY5OUg1NS4xODNWMTYuNTM4M0g0NC41MDg2VjE1LjgzNjhDNDQuNTA4NiAxNS4yMzM3IDQ0LjY0MjYgMTQuNzkzOCA0NC45MTA2IDE0LjUxNUM0NS4xNzc2IDE0LjIzNjEgNDUuNjI0IDE0LjA5NTYgNDYuMjQ4NyAxNC4wOTU2QzQ3LjAwNjQgMTQuMDk1NiA0Ny42NzU1IDE0LjE5NSA0OC4yNTcgMTQuMzk2MUw0OC41OTIgMTAuNTQ4M0M0Ny42NTM4IDEwLjMwMjkgNDYuNTk0NiAxMC4xNzk3IDQ1LjQxMzIgMTAuMTc5N0M0My44Mjg3IDEwLjE3OTcgNDIuNTI4NSAxMC42MzggNDEuNTE0NiAxMS41NTI0QzQwLjQ5ODYgMTIuNDY3OCAzOS45OTE3IDEzLjY0OTIgMzkuOTkxNyAxNS4wOTk3VjE2LjUzODNIMzcuMzE0NVYyMC4yODY3SDM5Ljk5MTdWMzMuMDY5OUgzOS45OTA2WiIgZmlsbD0iI0ZERkJGNyIvPgo8cGF0aCBkPSJNODYuNTY5OSAxMC41MTM3VjE4LjY3OTVIODYuNDY4M0M4NS44ODkgMTcuODMxIDg1LjIwMjYgMTcuMjA2MyA4NC40MTE1IDE2LjgwNTNDODMuNjE5MiAxNi40MDMyIDgyLjY3NTYgMTYuMjAyMiA4MS41ODI5IDE2LjIwMjJDNzkuNTA4NyAxNi4yMDIyIDc3LjgwMjEgMTYuODI2OSA3Ni40NjQgMTguMDc2NEM3NS4xMjU5IDE5LjMyNjkgNzQuMzIyOCAyMS4wNDQ0IDc0LjA1MzcgMjMuMjI5OEg3My45NTQzQzczLjg2NDYgMjAuOTMzIDczLjI2NzkgMTkuMTg3NSA3Mi4xNjQ0IDE3Ljk5NDJDNzEuMDU5OCAxNi44MDEgNjkuNDgwNiAxNi4yMDMzIDY3LjQyOTIgMTYuMjAzM0M2Ni4zMTM4IDE2LjIwMzMgNjUuMzA5NyAxNi40MTYyIDY0LjQxOCAxNi44Mzk5QzYzLjUyNTIgMTcuMjYzNiA2Mi44MDEgMTcuODc2NCA2Mi4yNDMzIDE4LjY4MDZINjIuMTQzOUw2MS43NzUzIDE2LjUzODNINTcuODU5NFYzMy4wNjk5SDYyLjM3NzNWMjQuMzY5MUM2Mi4zNzczIDIyLjk4NTYgNjIuNzEyNCAyMS44ODA5IDYzLjM4MTQgMjEuMDU1MkM2NC4wNTA1IDIwLjIzMDUgNjQuOTQzMiAxOS44MTc2IDY2LjA1ODcgMTkuODE3NkM2OC4zMTEyIDE5LjgxNzYgNjkuNDM4NSAyMS4yNTYyIDY5LjQzODUgMjQuMTM0NVYzMy4wNjk5SDczLjk1NjRWMjYuNDA5N0g3NC4wNTU5Qzc0LjMyMzkgMjguNTc0NiA3NS4xMzI0IDMwLjI4MTMgNzYuNDgyNCAzMS41MzA3Qzc3LjgzMTMgMzIuNzgwMiA3OS41MzI1IDMzLjQwNDkgODEuNTg1MSAzMy40MDQ5QzgyLjYxMDggMzMuNDA0OSA4My41MjYzIDMzLjE5NzQgODQuMzI5MyAzMi43ODQ1Qzg1LjEzMjQgMzIuMzcxNiA4NS44Njg1IDMxLjczMTggODYuNTM4NiAzMC44NjA2SDg2LjYzOEw4Ny4wNzM2IDMzLjA2OTlIOTEuMDg4OVYxMC41MTM3SDg2LjU3MUg4Ni41Njk5Wk04NS40ODI2IDI4LjQ2NjVDODQuNzU3MyAyOS4zNDg1IDgzLjc0ODkgMjkuNzg4NCA4Mi40NTQxIDI5Ljc4ODRDODEuMjI3MyAyOS43ODg0IDgwLjI1NjcgMjkuMzQyIDc5LjU0MzMgMjguNDUwM0M3OC44Mjg5IDI3LjU1NzYgNzguNDcyMiAyNi4zNDI3IDc4LjQ3MjIgMjQuODAzNkM3OC40NzIyIDIzLjI2NDQgNzguODI4OSAyMi4wNDg1IDc5LjU0MzMgMjEuMTU2OEM4MC4yNTY3IDIwLjI2NCA4MS4yMjczIDE5LjgxODcgODIuNDU0MSAxOS44MTg3QzgzLjc0ODkgMTkuODE4NyA4NC43NTczIDIwLjI1OTcgODUuNDgyNiAyMS4xNDA2Qzg2LjIwNzggMjIuMDIyNSA4Ni41NzEgMjMuMjQyOCA4Ni41NzEgMjQuODA0NkM4Ni41NzEgMjYuMzY2NSA4Ni4yMDc4IDI3LjU4NzggODUuNDgyNiAyOC40Njg3VjI4LjQ2NjVaIiBmaWxsPSIjRkRGQkY3Ii8+CjxwYXRoIGQ9Ik0yNy4wNjEyIDEzLjk5NTlDMjYuMjcxMSAxMy45Mzk3IDI1LjI2MzcgMTMuNzIxNCAyNC4wMzggMTMuMzQwOUMyMi44MTEzIDEyLjk1OTQgMjEuNzc1OCAxMi41NTg0IDIwLjkzMDYgMTIuMTM1OEwxOS44MzAzIDE0LjEyMjRDMjAuNDI4IDE0LjQxMzEgMjEuMTI3MyAxNC42OTQxIDIxLjkyODIgMTQuOTY2NUMxOS4yMTUzIDE2LjE2MDggMTYuNTg0NSAxNy42NDcgMTQuMDM3IDE5LjQyODJDMTMuNjcyNyAxOS42ODIyIDEzLjMxODIgMTkuOTQwNiAxMi45NjkxIDIwLjJDMTIuOTQ5NiAxOS44MTE5IDEyLjkyOTEgMTkuNDEwOSAxMi45MDc1IDE5LjAwMDJDMTQuMTMxIDE4LjAyNDIgMTUuMjU1MSAxNi45MDY2IDE2LjI3ODYgMTUuNjQ0MkMxNy42MDI3IDE0LjAwOTkgMTguNjM5MiAxMi4yOTc5IDE5LjM4NjEgMTAuNTA4QzIwLjEzMTkgOC43MTgxMiAyMC41MDY5IDcuMDMzMDcgMjAuNTA2OSA1LjQ1NTA0QzIwLjUwNjkgMy43NjM1MSAyMC4wODQzIDIuNDMxOTEgMTkuMjM4IDEuNDU5MTRDMTguMzkyOCAwLjQ4NjM4MSAxNy4yNTE0IDAgMTUuODEyOCAwQzEzLjgxMTEgMCAxMi4yNzQxIDAuOTA4OTkzIDExLjIwNDEgMi43MjgwNkMxMC4xMzI5IDQuNTQ2MDQgOS41Njg3NCA3LjExODQ2IDkuNTEyNTQgMTAuNDQ1M0M5LjQ4NDQ0IDExLjc2OTMgOS41Mzk1NiAxMy42NDQ2IDkuNjgxMTUgMTYuMDY3OUM5LjcxNzkgMTYuNTgwMiA5Ljc2MTEzIDE3LjIzMDkgOS44MDg2OSAxOC4wMTY2QzkuMzIwMTUgMTguMzIxNCA4Ljg2OTQzIDE4LjU2NjggOC40NTU0NyAxOC43NTI3QzcuNjEwMjUgMTkuMTM0MiA2LjczNTg0IDE5LjMyNDUgNS44MzQ0MSAxOS4zMjQ1QzQuOTMyOTkgMTkuMzI0NSA0LjE2MzQyIDE5LjAwNjcgMy42MTQzNSAxOC4zNzIyQzMuMDY0MiAxNy43Mzc4IDIuNzMzNDYgMTYuODg2MSAyLjYyMTA1IDE1LjgxNUwwIDE3LjEyNDlDMC4xMTI0MDggMTguNTkxNyAwLjcxMjI3OSAxOS43ODkyIDEuNzk2MzcgMjAuNzE4OEMyLjg4MTU0IDIxLjY1MDUgNC4yMDAxNyAyMi4xMTQxIDUuNzUwMTEgMjIuMTE0MUM2LjY4MTggMjIuMTE0MSA3LjYzODM1IDIxLjkzMTUgOC42MjUxNiAyMS41NjRDOS4wNTY0MiAyMS40MDQgOS41MDE3MyAyMS4yMDE5IDkuOTYwMDEgMjAuOTYwOUM5Ljk4Mzc5IDIxLjUzNTkgMTAuMDA2NSAyMi4wODI4IDEwLjAyNTkgMjIuNjAzOEM4LjQ2MDg3IDI0LjAxNTQgNy4wOTI1MiAyNS40OTM5IDUuOTE5OCAyNy4wMzk2QzMuODMyNjggMjkuNzg4MiAyLjc4OTY3IDMyLjQzMDggMi43ODk2NyAzNC45Njg3QzIuNzg5NjcgMzYuNTE4NiAzLjE5ODIzIDM3Ljc0NDMgNC4wMTY0MyAzOC42NDY4QzQuODMzNTUgMzkuNTQ4MiA1LjkxODcyIDQwIDcuMjcxOTQgNDBDOC45NjM0NyA0MCAxMC4zMTU2IDM5LjM4NjEgMTEuMzMxNiAzOC4xNjA0QzEyLjM0NTQgMzYuOTM0NyAxMi45Mzc3IDM1LjEzNzMgMTMuMTA3NCAzMi43NjkxQzEzLjIxODggMzEuMzU5NyAxMy4yNjk2IDI5Ljc1MzYgMTMuMjU1NSAyNy45NDk2QzEzLjI0NjkgMjYuODc2NCAxMy4yMDE1IDI1LjM1ODggMTMuMTE4MiAyMy4zOTgyQzEzLjkyMDIgMjIuNzQxIDE0Ljc3NjMgMjIuMTAxMiAxNS42ODYzIDIxLjQ3OTdDMTguMDM4MyAxOS44NzM1IDIwLjQ5MDcgMTguNDg2OCAyMy4wNDM3IDE3LjMxNTJDMjIuNzE3MiAxOC4wNTM0IDIyLjQ0ODEgMTguNzUxNiAyMi4yNDA2IDE5LjQwNzdMMjQuNDgyMyAyMC4wNDIyQzI0LjczNjMgMTkuMTk2OSAyNS4xMjMyIDE4LjIwOSAyNS42NDUzIDE3LjA4MjhDMjYuMTY2MiAxNS45NTU1IDI2LjY5NDggMTUuMDY3IDI3LjIyOTggMTQuNDE4NUwyNy4wNjEyIDEzLjk5NTlaTTEyLjY0MTYgMTAuNDg2NEMxMi42Njk3IDguMDMzOTQgMTIuOTU5NCA2LjEzOTIxIDEzLjUwOTUgNC44MDAwNEMxNC4wNTg2IDMuNDYxOTUgMTQuODEzIDIuNzkwNzUgMTUuNzcxNyAyLjc5MDc1QzE2LjMwNTcgMi43OTA3NSAxNi43MTY0IDMuMDE2NjUgMTYuOTk3NCAzLjQ2NzM2QzE3LjI3ODQgMy45MTkxNSAxNy40MiA0LjYwODczIDE3LjQyIDUuNTM4MjZDMTcuNDIgNi44MzUyOCAxNy4xNTk1IDguMjAyNTUgMTYuNjM3NSA5LjYzOUMxNi4xMTQ0IDExLjA3NzYgMTUuNDA0MiAxMi40Mjk3IDE0LjUwMjggMTMuNjk4N0MxMy45NTkxIDE0LjQ2MTcgMTMuMzc0NCAxNS4xNDcgMTIuNzQ5NyAxNS43NTc3TDEyLjcyNTkgMTUuMjYyNkMxMi42NDE2IDEzLjAzNjEgMTIuNjEzNSAxMS40NDI5IDEyLjY0MTYgMTAuNDg0MlYxMC40ODY0Wk0xMC4wMjA1IDMyLjcyODFDOS44Nzg5NSAzNC4xMDgzIDkuNTc3MzkgMzUuMjAxIDkuMTExNTQgMzYuMDA0MUM4LjY0Njc4IDM2LjgwODMgOC4wNjA5NiAzNy4yMDkzIDcuMzU2MjUgMzcuMjA5M0M2LjkwNDQ1IDM3LjIwOTMgNi41NDU2MSAzNy4wMjY2IDYuMjc4NjQgMzYuNjYwMkM2LjAxMDU5IDM2LjI5MjcgNS44NzY1NyAzNS43Mjg1IDUuODc2NTcgMzQuOTY4N0M1Ljg3NjU3IDMyLjcxMjkgNi43NzkwOCAzMC40MDIxIDguNTgzMDEgMjguMDMzOUM5LjA2Mzk5IDI3LjQwMjcgOS41ODcxMiAyNi43ODQ1IDEwLjE0ODEgMjYuMTc4MUMxMC4xNjY1IDI2Ljg0MzkgMTAuMTgwNSAyNy40Mjc2IDEwLjE4ODEgMjcuOTI5MUMxMC4yMTYyIDI5LjcxOSAxMC4xNiAzMS4zMTg2IDEwLjAxOTUgMzIuNzI4MUgxMC4wMjA1WiIgZmlsbD0iIzhFREU2NSIvPgo8L3N2Zz4K"
+      alt="Findigs"
+    />
+    <div class="top-nav-divider"></div>
+    <span class="top-nav-label">McKinley fast track guide</span>
+  </nav>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <p class="sidebar-title">In this guide</p>
+    <ul class="toc-list">
+      <li class="toc-section">
+        <a class="toc-section-link" href="#section-1">1 — Where to get help</a>
+        <ul class="toc-sub-list">
+          <li><a class="toc-sub-link" href="#who-to-ask">Who to ask</a></li>
+          <li><a class="toc-sub-link" href="#support-tickets">Support tickets</a></li>
+          <li><a class="toc-sub-link" href="#rescreens">Re-screens</a></li>
+          <li><a class="toc-sub-link" href="#fraud-dispute">Fraud disputes</a></li>
+          <li><a class="toc-sub-link" href="#service-hours">Service hours</a></li>
+        </ul>
+      </li>
+      <li class="toc-section">
+        <a class="toc-section-link" href="#section-2">2 — Applying together</a>
+        <ul class="toc-sub-list">
+          <li><a class="toc-sub-link" href="#group-apply">Applying as a group</a></li>
+          <li><a class="toc-sub-link" href="#merging">Merging applications</a></li>
+        </ul>
+      </li>
+      <li class="toc-section">
+        <a class="toc-section-link" href="#section-3">3 — Transferring applications</a>
+        <ul class="toc-sub-list">
+          <li><a class="toc-sub-link" href="#transfer-across">Transfer across properties</a></li>
+          <li><a class="toc-sub-link" href="#transfer-fee">App fee specials</a></li>
+          <li><a class="toc-sub-link" href="#request-transfer">Requesting a transfer</a></li>
+        </ul>
+      </li>
+      <li class="toc-section">
+        <a class="toc-section-link" href="#section-4">4 — Underwriting process</a>
+        <ul class="toc-sub-list">
+          <li><a class="toc-sub-link" href="#criminal-review">Criminal review</a></li>
+          <li><a class="toc-sub-link" href="#id-verification">Identity verification</a></li>
+          <li><a class="toc-sub-link" href="#score-ranges">Score ranges</a></li>
+          <li><a class="toc-sub-link" href="#lease-mod">Lease mod landlord form</a></li>
+          <li><a class="toc-sub-link" href="#approved-declined">Approved then declined</a></li>
+          <li><a class="toc-sub-link" href="#fastest-path">Fastest path to decision</a></li>
+          <li><a class="toc-sub-link" href="#corporate">Corporate approvals</a></li>
+        </ul>
+      </li>
+      <li class="toc-section">
+        <a class="toc-section-link" href="#section-5">5 — Income verification</a>
+        <ul class="toc-sub-list">
+          <li><a class="toc-sub-link" href="#bank-income">Bank statement income</a></li>
+          <li><a class="toc-sub-link" href="#income-calc">Income calculation</a></li>
+          <li><a class="toc-sub-link" href="#28-day-rule">28-day rule</a></li>
+          <li><a class="toc-sub-link" href="#physical-docs">Physical documents</a></li>
+          <li><a class="toc-sub-link" href="#other-income">Other income forms</a></li>
+          <li><a class="toc-sub-link" href="#offer-letter">Offer letter verification</a></li>
+          <li><a class="toc-sub-link" href="#idv-fraud">IDV &amp; fraud detection</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="doc-hero">
+      <p class="doc-hero-eyebrow">McKinley × Findigs</p>
+      <h1>Findigs fast track</h1>
+      <p>What questions are your teammates asking? How do you get an efficient process for your hot lead? All of the questions and feedback from our best and brightest sales stars — compiled into one place. Welcome to the Findigs fast track.</p>
+      <p style="font-size:14px; color:rgba(253,251,247,0.55); margin-bottom:0;">The full guidelines for Findigs underwriting are covered in the Standard Operating Procedures (SOPs) linked below.</p>
+    </div>
+
+    <!-- Key Resources -->
+    <div class="key-resources">
+      <h3>Key resources — SOPs</h3>
+      <ul>
+        <li><a href="https://findigs.notion.site/McKinley-Michigan-Market-Client-SOP-4c9fc0dd99ac47a69183d47003543830" target="_blank">McKinley Michigan Market SOP</a></li>
+        <li><a href="https://findigs.notion.site/McKinley-Florida-Market-Client-SOP-6263f955df4f4b75a96d1a7bb444a72a" target="_blank">McKinley Michigan Ann Arbor SOP</a></li>
+        <li><a href="https://findigs.notion.site/McKinley-Florida-Market-Client-SOP-6263f955df4f4b75a96d1a7bb444a72a" target="_blank">McKinley Florida Market SOP</a></li>
+        <li><a href="https://findigs.notion.site/McKinley-Michigan-Florida-Affordable-Client-SOP-d21bfa5691e544eba0d8d4f46c556a9f" target="_blank">McKinley Michigan/Florida Affordable SOP</a></li>
+      </ul>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 1 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="doc-section" id="section-1">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2>Where do I go when I need help?</h2>
+      </div>
+
+      <!-- Who to ask -->
+      <div class="qa-item" id="who-to-ask">
+        <p class="qa-question">Who do I ask if I have a question?</p>
+        <div class="qa-body">
+          <p>If you have a novel question not covered in this guide, consult your Community Manager for support. If they are unable to determine the solution, they will reach out to their Regional Director for guidance on next steps. Jackie Yazigi will be our point of contact and CMs' main connect point to triage those instances.</p>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Support tickets -->
+      <div class="qa-item" id="support-tickets">
+        <p class="qa-question">How do I submit a Findigs support ticket?</p>
+        <div class="qa-body">
+          <p>At the bottom of your Findigs screen, you'll see a section titled "Support."</p>
+          <ol style="margin-bottom:var(--space-4);">
+            <li><strong>Support tickets:</strong> Please make sure you are submitting support tickets for anything related to individual app processing.</li>
+            <li><strong>Do not use the chat feature</strong> at the bottom of the app to ask for help. Click the "Support" button on the left side of any page in Findigs — that is the correct spot to fill out your ticket.</li>
+          </ol>
+          <p>If you have an issue with the Findigs Support tab working, please reach out to Josh Lin at <a href="mailto:joshua.lin@Mckinley.com">joshua.lin@Mckinley.com</a>.</p>
+
+          <div class="callout callout-tip" style="margin-bottom:var(--space-4);">
+            <strong>3 escalation paths available:</strong> Findigs created three priority escalation paths specifically for the McKinley team — for applicants moving in same day (or next day) or who are on site. Take full advantage of those options when they apply.
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Support ticket type</th>
+                  <th>When to use</th>
+                  <th>Who can use it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ticket-name">Remove applicant</td>
+                  <td>Removing an applicant from the application group</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Invite applicant</td>
+                  <td>Inviting an applicant to the application group after it's already been submitted</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Merge applicant</td>
+                  <td>Merging application groups</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Cancel application</td>
+                  <td>Canceling an application</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr class="row-dont">
+                  <td class="ticket-name"><strong>IDV denial</strong></td>
+                  <td><span class="tag tag-dont">Do not use</span> — fraud flags and/or denials will not be escalated. If applicants want to dispute a fraud denial they can email <a href="mailto:disputeresolution@findigs.com">disputeresolution@Findigs.com</a></td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Change property/floorplan</td>
+                  <td>Changing an application group to a different floorplan or property</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr class="row-dont">
+                  <td class="ticket-name"><strong>Invite guarantor</strong></td>
+                  <td><span class="tag tag-dont">Do not use</span> — no guarantors accepted currently</td>
+                  <td>Not applicable</td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Voucher</td>
+                  <td>Only use if there is an issue with the voucher documents/process</td>
+                  <td>Sydney Schroeder as representative for McKinley</td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Lease modification information change</td>
+                  <td>Clarifying when an application is a lease mod if there is confusion, and/or to continue app review if the lease mod was pending some internal action. <em>Note: Can be used for regular lease mods, corporate applicants, and employee's lease co-applicants.</em></td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Rescreen information change</td>
+                  <td>Use when the prospect plans to move in earlier than the "estimated move in date" in the Findigs application. E.g., if the estimated move in date was July 15th and the prospect intends to move in on June 4th.</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Same day or next day move in <span class="tag tag-escalation">Escalation</span></td>
+                  <td>Used to escalate time-sensitive issues because the applicant is moving same day or next day. <em>Note: Cannot be used to escalate criminal decisions and/or offer letter verification.</em></td>
+                  <td><span class="tag tag-all">All team members</span> with a hot lead moving in same or next day</td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">Applicant on-site <span class="tag tag-escalation">Escalation</span></td>
+                  <td>Used to escalate time-sensitive issues because the applicant is on-site. <em>Note: Cannot be used to escalate criminal decisions and/or offer letter verification.</em></td>
+                  <td><span class="tag tag-all">All team members</span> with an applicant on site</td>
+                </tr>
+                <tr>
+                  <td class="ticket-name">PM-uploaded documents <span class="tag tag-escalation">Escalation</span></td>
+                  <td>Used to clarify when our leasing team is uploading physical scanned documents on behalf of the applicant</td>
+                  <td><span class="tag tag-all">All team members</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Re-screens -->
+      <div class="qa-item" id="rescreens">
+        <p class="qa-question">Re-screens — what do I do if my prospect intends to move in prior to their estimated move-in date?</p>
+        <div class="qa-body">
+          <p>Use the <strong>"Rescreen Information Change"</strong> support ticket to notify Findigs the resident is moving in sooner than the estimated move-in date. This will ensure Findigs catches the rescreen before the move-in occurs.</p>
+          <p>Also, remember to check the resident's estimated move-in date to ensure a proper 45-day rescreen.</p>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Fraud dispute -->
+      <div class="qa-item" id="fraud-dispute">
+        <p class="qa-question">What do I do if my applicant is disputing a decline for ID or fraud?</p>
+        <div class="qa-body">
+          <p>If an applicant wants to dispute a declined decision that results from a fraud or ID issue, guide them to email <a href="mailto:disputeresolution@findigs.com">disputeresolution@Findigs.com</a>. The adverse action letter will say "misrepresentation of application information."</p>
+          <div class="callout callout-warn">
+            <strong>Important:</strong> As tough as it may be when an applicant you're "rooting" for is denied for fraud, all fraud decisions are based on Findigs' screening process. McKinley will not dispute or override any fraud or ID verification-related declines. We will leave fraud detection and identity verification to the professionals at Findigs.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Service hours -->
+      <div class="qa-item" id="service-hours">
+        <p class="qa-question">When is our Findigs underwriting team working?</p>
+        <div class="qa-body">
+          <p>Findigs is open 7 days a week including holidays.</p>
+          <div class="hours-grid">
+            <div class="hours-card">
+              <span class="hours-day">Monday – Saturday</span>
+              <span class="hours-time">8am – 1am ET</span>
+            </div>
+            <div class="hours-card">
+              <span class="hours-day">Sundays</span>
+              <span class="hours-time">9am – 11pm ET</span>
+            </div>
+          </div>
+          <div class="callout-stat">
+            <strong>35%</strong> of applications in summer 2024 were approved outside of McKinley working hours. Even on holidays, you can come back to freshly approved apps ready to reserve.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 2 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="doc-section" id="section-2">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2>How do I help my applicants apply together?</h2>
+      </div>
+
+      <!-- Group apply -->
+      <div class="qa-item" id="group-apply">
+        <p class="qa-question">How do prospects apply together as a group?</p>
+        <div class="qa-body">
+          <div class="callout callout-warn">
+            <strong>Pay close attention</strong> — this is a common issue that may slow down your prospect's approval process. Guiding your prospect on the right path will get you to the finish line more quickly.
+          </div>
+
+          <p><strong>To reduce merge requests, follow these steps for inviting additional applicants:</strong></p>
+          <ul>
+            <li>Send the unique application link to <strong>only one applicant</strong>.</li>
+            <li>If sending them to the website, inform them to have only one person create the app and then invite the other applicants.</li>
+            <li><strong>Before the application has been submitted</strong>, have applicants follow these steps to invite their additional applicants:</li>
+          </ul>
+
+          <ul class="steps-list" style="margin-top:var(--space-4);">
+            <li class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-body"><strong>Applicant invitation</strong> — the applicant will first complete their sign up and then start their application. They will <em>not</em> submit the application yet.</div>
+            </li>
+            <li class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-body">Navigate to the <strong>Your Household</strong> page on their application's home page and click <strong>Start</strong>.</div>
+            </li>
+            <li class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-body">Select the number of additional applicants and click <strong>Continue</strong>.</div>
+            </li>
+            <li class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-body">Fill in the information for the additional applicants they'd like to add.</div>
+            </li>
+            <li class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-body">The invited applicant will receive their invitation email and will complete their application in Findigs, already linked to the existing application.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Merging -->
+      <div class="qa-item" id="merging">
+        <p class="qa-question">Merging applications — what happens if my applicants apply separately?</p>
+        <div class="qa-body">
+          <div class="callout callout-warn">
+            <strong>Best practice</strong> is to ensure everyone applies together from the start. However, when a merge needs to be processed, it's important to use specific names and links when submitting a ticket for merging. If the request is not clear, it could result in merging to the incorrect group link.
+          </div>
+          <p><strong>Inviting applicants after submission</strong> — please remember to <strong>submit a ticket</strong> to invite additional applicants to an application after it's already been submitted. Avoid sending the invitation through the application yourself.</p>
+          <div class="callout callout-alert">
+            If you merge an application after it is approved, you'll kick the application to "Pending Review" and the application will need to be unassigned from the Unit Status. Best practice is to ensure your applicant has all co-applicants merged before the application is decided to avoid further delay in assigning an apartment.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 3 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="doc-section" id="section-3">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <h2>How do I transfer applications?</h2>
+      </div>
+
+      <!-- Transfer across -->
+      <div class="qa-item" id="transfer-across">
+        <p class="qa-question">Can I transfer across properties?</p>
+        <div class="qa-body">
+          <ul>
+            <li><strong>In Orlando</strong> — yes. All properties are underwritten the same, and therefore transfers are allowed.</li>
+            <li><strong>In Michigan</strong> — transfers can take place between City of Ann Arbor properties, and transfers can take place between properties on the East Side of Ann Arbor. However, transfers <strong>cannot</strong> take place between City of Ann Arbor and East Side properties. The main reason is because the requirements for the City of Ann Arbor differ from those of the East Side of Ann Arbor.</li>
+          </ul>
+
+          <div class="property-grid">
+            <div class="property-col">
+              <h4>City of Ann Arbor properties — "McKinley Michigan Ann Arbor"</h4>
+              <ul>
+                <li>Manchester Flats</li>
+                <li>Manchester West</li>
+                <li>Meadowbrook Village</li>
+                <li>Medical Center Court</li>
+                <li>Spruce Knob</li>
+                <li>State Street Village</li>
+                <li>Park Place &amp; Hillcrest</li>
+                <li>Traver Courts</li>
+                <li>Traver Crossing</li>
+                <li>Traver Heights</li>
+                <li>Traver Ridge</li>
+              </ul>
+            </div>
+            <div class="property-col">
+              <h4>East Side properties — "McKinley Michigan Market"</h4>
+              <ul>
+                <li>Aspen Chase</li>
+                <li>Evergreen</li>
+                <li>Glencoe Hills</li>
+                <li>Glencoe Oaks</li>
+                <li>Golfside Lake</li>
+                <li>McDonald Mansion</li>
+                <li>Roundtree</li>
+                <li>Schooner Cove I &amp; II</li>
+                <li>The Villas</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            If someone applies in the City of Ann Arbor and wants to transfer to the East Side, they must re-apply (and vice versa) with a new application fee.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Transfer fee -->
+      <div class="qa-item" id="transfer-fee">
+        <p class="qa-question">What do I do if the property I am transferring from has an app fee special?</p>
+        <div class="qa-body">
+          <p>Due to Fair Housing, we will ensure that any transfer that takes place will account for differences in specials such as application fees.</p>
+          <p>If one property has an application fee special (e.g., $1 app fee), and the property transferring to has standard application fees (e.g., $50 app fee), the resident would be charged the difference between the two fees (in this example, $49). This would be done through a manual quick charge to be paid by the resident on the portal.</p>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Request transfer -->
+      <div class="qa-item" id="request-transfer">
+        <p class="qa-question">How do I go about requesting a property transfer?</p>
+        <div class="qa-body">
+          <div class="transfer-grid">
+            <div class="transfer-card">
+              <h4>Application not yet approved</h4>
+              <p>Submit a Findigs ticket using the category <strong>"Change Property / Floorplan."</strong></p>
+            </div>
+            <div class="transfer-card">
+              <h4>Application already approved</h4>
+              <p>Submit a McKinley IT ticket at <a href="mailto:itsupport@mckinley.com">itsupport@mckinley.com</a>.</p>
+            </div>
+          </div>
+          <p>In both cases, please make sure to include the name of the property and floorplan being transferred to.</p>
+
+          <p style="margin-top:var(--space-4);"><strong>If someone reserves, then requests a transfer to another property, does the original property keep the reservation fee?</strong></p>
+          <ul>
+            <li><strong>If the reservation is on the waitlist</strong> — McKinley will allow a transfer along with the transfer of the original reservation fee. To accommodate the transfer, please reach out to your RAM.</li>
+            <li><strong>If the reservation is assigned to an actual apartment (Vacant or Notice Rented)</strong> — the future resident would lose their reservation fee. The prospect will need to provide a new reservation fee to the other McKinley property. Exceptions will apply if the reason for the transfer is due to McKinley error or out of the prospect's control such as a canceled notice (please reach out to your managers and directors in these circumstances to confirm).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 4 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="doc-section" id="section-4">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2>What to know about underwriting process and policy</h2>
+      </div>
+
+      <!-- Criminal review -->
+      <div class="qa-item" id="criminal-review">
+        <p class="qa-question">Criminal review — it's taking forever. What's the deal?</p>
+        <div class="qa-body">
+          <div class="callout callout-alert">
+            <strong>These cannot be escalated.</strong> Though we previously may have shared estimated report return times, we are not going to share those moving forward as the estimates are extremely variable. The last thing we want is to set the wrong expectations.
+          </div>
+          <p>Any criminal report that doesn't get returned immediately means there are records being investigated manually with the courts. This is especially true in Michigan but can happen anywhere. The court systems are not all super transparent or easy to access, and thus, sometimes records are retrieved by a "runner" system. As a result, this can take some time dependent on how fast the court responds.</p>
+          <div class="callout callout-tip">
+            We know how frustrating it can feel waiting for a criminal decision to come back. Know that a longer return time is a result of the complexities of the court retrieval system, and your Findigs team will return the information as soon as it becomes available to them. Findigs has done the research for each of McKinley's core markets — Michigan and Florida — to offer McKinley the most expedient and comprehensive resources by market to ensure accurate and timely results.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- ID verification -->
+      <div class="qa-item" id="id-verification">
+        <p class="qa-question">How can I help with identity verification?</p>
+        <div class="qa-body">
+          <div class="callout callout-tip">
+            If you're working with an applicant to upload ID, make sure that their picture is <strong>not blurry</strong>.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Score ranges -->
+      <div class="qa-item" id="score-ranges">
+        <p class="qa-question">How do the resident score ranges work?</p>
+        <div class="qa-body">
+          <p>Note: the resident score ranges do change from time to time, so please refer to the SOPs for the latest criteria.</p>
+          <ul>
+            <li>You will see the ranges overlap — that's ok.</li>
+            <li>Here's how you'd read our credit score ranges:</li>
+          </ul>
+
+          <div class="score-range" style="margin-top:var(--space-4);">
+            <div class="score-row">
+              <span class="score-label">Decline</span>
+              <div class="score-bar score-bar-decline" style="max-width:40%;"></div>
+              <span class="score-value">Below 580</span>
+            </div>
+            <div class="score-row">
+              <span class="score-label">Conditional approval</span>
+              <div class="score-bar score-bar-conditional" style="max-width:55%;"></div>
+              <span class="score-value">580 exactly</span>
+            </div>
+            <div class="score-row">
+              <span class="score-label">Approval</span>
+              <div class="score-bar score-bar-approve" style="max-width:75%;"></div>
+              <span class="score-value">600 and above</span>
+            </div>
+          </div>
+
+          <div class="callout callout-info" style="margin-top:var(--space-4);">
+            Findigs takes the <strong>average for the group</strong>, so there could be a decimal place. The application notes will reflect the decimal if one exists. Please note that we do not overturn applicants.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Lease mod -->
+      <div class="qa-item" id="lease-mod">
+        <p class="qa-question">When doing a lease mod, when should I use the "landlord form"?</p>
+        <div class="qa-body">
+          <div class="callout callout-warn">
+            The landlord form for a lease mod should only be uploaded when a new applicant is being added to an existing resident and <strong>no one is coming off the lease</strong>. Any time someone is coming off, the residents staying in the home and the applicants being added should apply together to go through the entire review process, including income.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Approved then declined -->
+      <div class="qa-item" id="approved-declined">
+        <p class="qa-question">What do I do if I see an app approved, then declined?</p>
+        <div class="qa-body">
+          <p>The application was approved and now is not — what happened?</p>
+          <ul>
+            <li>Every once in a while, an application will get through as approved, then will get declined. The application did not pass Findigs' quality control review and the applicant will need to provide additional information.</li>
+            <li>McKinley's role in this will need to be limited. <strong>If the prospect asks why, they will need to redirect that question to Findigs in the chat.</strong></li>
+            <li>While this can be frustrating, this additional quality check ensures Findigs minimizes errors.</li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Fastest path -->
+      <div class="qa-item" id="fastest-path">
+        <p class="qa-question">What's the fastest path for prospects to get a decision?</p>
+        <div class="qa-body">
+          <div class="callout callout-tip">
+            <strong>These are the big ones</strong> to ensure your prospect's app goes super fast.
+          </div>
+          <ul>
+            <li>Ask your applicant to <strong>apply with their whole group from the start.</strong></li>
+            <li>Suggest to your applicant to use <strong>direct bank and/or payroll link</strong> in order to receive the fastest approval experience.</li>
+            <li>Ask your prospect to <strong>provide their identification upfront.</strong></li>
+            <li>Ask your applicant to <strong>use the chat:</strong> the best way to get anything resolved is to make sure the applicant is engaging directly with Findigs in the chat. The prospect using the chat is even faster than escalating a ticket.</li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Corporate -->
+      <div class="qa-item" id="corporate">
+        <p class="qa-question">My prospect asked how we do corporate approvals. What do I do first?</p>
+        <div class="qa-body">
+          <div class="callout callout-tip">
+            <strong>Check with your Director</strong> to confirm whether this company has been screened in the past. It may save you some time.
+          </div>
+          <p>When a company would like to put a lease in their name, the first step is to have them complete a TransUnion Application. The document can be found in PandaDoc and should be sent to the company/corporation for completion.</p>
+          <ul>
+            <li>When the TransUnion application has been completed, the salesperson should send a downloaded copy of the completed TU application to <a href="mailto:rsapps@transunion.com">rsapps@transunion.com</a>, and CC:
+              <ul style="margin-top:var(--space-2);">
+                <li><a href="mailto:underwriting@findigs.com">underwriting@Findigs.com</a></li>
+                <li><a href="mailto:erin.holcomb@findigs.com">erin.holcomb@Findigs.com</a></li>
+                <li>The community's Associate or Regional Director</li>
+                <li>Lisa DiCarlo</li>
+              </ul>
+            </li>
+            <li>A "One Time Authorization Form" should be sent via PandaDoc to the corporation for the application fee. The completed form should be sent to the Residential Account Manager (RAM) for processing.</li>
+            <li>The corporate application will be processed by Findigs and when a decision is reached, the salesperson will receive an email back with the results.
+              <ul style="margin-top:var(--space-2);">
+                <li>If approved, move to the next steps for Occupant Applications.</li>
+                <li><strong>Remember: loop in Lauren Collins and your Director on the corporate application approval.</strong></li>
+                <li>If denied, Findigs will notify the corporation of the results.</li>
+              </ul>
+            </li>
+            <li>All other standard procedures for reserving a home and the move-in process still apply for all Corporate Lease Agreements.</li>
+          </ul>
+
+          <p style="margin-top:var(--space-4);"><strong>Corporate lease occupant</strong> — all occupants over 18 must complete an application through Findigs and pay the standard application fees. In order to be properly screened, the "McKinley — Corporate Lease Occupant (Findigs)" form should be completed in PandaDoc and provided to the occupant to upload as their Proof of Income. Corporate lease occupants cannot occupy the home unless their application is approved through Findigs.</p>
+
+          <p><strong>Corporate lease addendum</strong> — for all corporate lease agreements, the Corporate Lease Addendum found in PandaDoc must also be signed in addition to the standard lease agreement. All approved occupants in the home must be entered on this addendum once the Findigs screening is complete and approved. If any changes are made to occupants in the home, the process for Occupant Applications and re-signing of the Corporate Lease Addendum must be followed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 5 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="doc-section" id="section-5">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2>All things income verification</h2>
+      </div>
+
+      <!-- Bank income -->
+      <div class="qa-item" id="bank-income">
+        <p class="qa-question">My prospect has income on their bank statement that isn't being counted. Can I get it added?</p>
+        <div class="qa-body">
+          <p>If your applicant receives income through cash apps like Zelle or CashApp, they'll need to declare their income in the Findigs chat box to have it counted. The more specific they are on which Zelle/CashApp payments should be included, the better.</p>
+          <p>Findigs will try to match the name of each payment to the type of work the applicant indicates. If Findigs cannot match the work description to the payments, they'll count all Zelle/CashApp transactions <strong>except for:</strong></p>
+          <ul>
+            <li>Any Zelle/CashApp payment that says <strong>"transfer"</strong> will not be counted. Only payments that show as "payment."</li>
+            <li>Any Zelle/CashApp payment from someone with the same name as an applicant will not be counted.</li>
+            <li>To avoid confusion or the application going to pending, bank linking would be best provided there are regular deposits being made. <em>How</em> they are paid is an important part of the application discussion and should be discussed prior to applying.</li>
+          </ul>
+          <div class="callout callout-warn">
+            <strong>Bank statements cannot be used as "supplemental income,"</strong> to ensure that we aren't counting income twice. We can't combine the qualification methods to ensure consistency in screening review.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Income calc -->
+      <div class="qa-item" id="income-calc">
+        <p class="qa-question">When I manually calculate the monthly income from their paystubs or bank statements, it seems different than what Findigs calculated. Why?</p>
+        <div class="qa-body">
+          <div class="callout callout-tip">
+            The Findigs calculated income number may differ from a "back of the napkin" manual calculation from our team, and that's ok. The methodology Findigs uses to calculate income — whether using bank statements, pay stubs, or direct bank/payroll link — comes up with a daily average income based on the information provided. This offers our prospects a more balanced view on income, if for example, they were paid more in one month than prior, or vice versa.
+          </div>
+
+          <p><strong>So how does income calculation work?</strong></p>
+
+          <div class="method-card">
+            <h4>Manual document uploads</h4>
+            <p>If the applicant uploaded bank statements or paystub docs, Findigs will take those and calculate the average pay amount per "day," and then multiply that by 30. This standardized calculation is used to make sure different types of income sources are treated equitably.</p>
+          </div>
+
+          <div class="method-card">
+            <h4>Bank/payroll linking</h4>
+            <p>If the applicant bank or payroll links, Findigs will take all available transactions up to 90 days back, and calculate an average pay amount per "day," then multiply that by 30 to get the monthly verified income. This approach is designed to better accommodate applicants with lumpy income.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- 28-day rule -->
+      <div class="qa-item" id="28-day-rule">
+        <p class="qa-question">My prospect provided bank statements, but they are not being counted. Why not?</p>
+        <div class="qa-body">
+          <div class="callout callout-alert">
+            <strong>The 28-day minimum rule</strong> — check the notes in the application. It is likely the bank statement provided is less than 28 days of history (minimum needed). If the applicant's bank account hasn't been open for 29 days and they don't have a statement, we'll have to wait until they get their first statement to move forward.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Physical docs -->
+      <div class="qa-item" id="physical-docs">
+        <p class="qa-question">My applicant only has physical paystubs or bank statements. How can I get these accepted?</p>
+        <div class="qa-body">
+          <p><strong>First, the applicant will need to</strong> go into chat and state that they don't have any way to access digital copies and only have paper documents available.</p>
+          <div class="callout callout-tip">
+            Submit a support ticket to Findigs — <strong>"PM-Uploaded Documents."</strong> This ticket will allow you to explain to Findigs that the applicant is in the office and McKinley has scanned the document for the applicant.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Other income -->
+      <div class="qa-item" id="other-income">
+        <p class="qa-question">What do I say to my prospects about using other forms of income to qualify (liquid assets, 401K, stock accounts, etc.)?</p>
+        <div class="qa-body">
+          <ul>
+            <li>Findigs can only use one method of qualification for income. Findigs cannot use a combination of liquid assets <em>and</em> regular income for qualifications.</li>
+            <li>Only liquid assets can be used for income qualifications. If there is an investment account, Findigs can only use the <strong>available cash balance</strong>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Offer letter -->
+      <div class="qa-item" id="offer-letter">
+        <p class="qa-question">How does the offer letter verification process work?</p>
+        <div class="qa-body">
+          <ul>
+            <li>Findigs will first attempt to verify the offer letter by emailing the supervisor listed on the offer letter.
+              <ul style="margin-top:var(--space-2);">
+                <li>The domain address of the email (e.g., @mckinley.com) must match the employer's website.</li>
+                <li>Findigs sees a high incidence of fraud when the domains don't match.</li>
+              </ul>
+            </li>
+            <li><strong>If email verification isn't possible, the process may take longer:</strong> If there is no available email on the offer letter, manual verification will be required. Findigs will call via the phone number available through business lookup. They will not accept any number provided by the applicant.</li>
+          </ul>
+          <div class="callout callout-info" style="margin-top:var(--space-3);">
+            <strong>My applicant just opened a bank account.</strong> What is the best way to verify their income? Instruct the applicant to choose <strong>bank linking</strong> in this case.
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- IDV fraud -->
+      <div class="qa-item" id="idv-fraud">
+        <p class="qa-question">How does Findigs' Identity Verification (IDV) and Synthetic Fraud Detection work?</p>
+        <div class="qa-body">
+          <p>Findigs has seen a rise in applicants supplying fake Social Security Numbers to hide previous evictions or negative credit history. Findigs' Synthetic Fraud Detection is designed to catch when applicants are using fraudulent SSNs when another SSN is a stronger match to that individual, indicating they are not providing the correct ID information.</p>
+
+          <div class="callout-stat">
+            <strong>99.8% accuracy rate</strong> on catching fraudulent Social Security Numbers in Findigs' initial tests.
+          </div>
+
+          <ul style="margin-top:var(--space-4);">
+            <li><strong>Detected immediately upon app submission.</strong> Many of the document fraud cases we've seen also have used a fake SSN. This is a major addition as it allows us to detect these immediately and save time from following up getting income documents from applicants who will not qualify.</li>
+            <li><strong>Those with no SSN or using passport numbers will not be affected.</strong> This is very important as we are not looking to negatively affect our large immigrant/international resident population.</li>
+          </ul>
+
+          <p>If an applicant wants to dispute a declined decision that results from a fraud or ID issue, guide them to email <a href="mailto:disputeresolution@findigs.com">disputeresolution@Findigs.com</a>. The adverse action letter <strong>emailed by Findigs directly to the applicant</strong> will say "misrepresentation of application information."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- APPLICANT TIPS (end section) -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="tips-section">
+      <h2>Applying to a McKinley apartment home?</h2>
+      <p class="tips-subtitle">Tips to ensure your application is decisioned quickly.</p>
+      <ul class="tips-list">
+        <li class="tip-item">
+          <div class="tip-num">1</div>
+          <div class="tip-body"><strong>Apply with your co-applicants from the very start.</strong> Whether it's family or friends, ensure that you apply together with those you plan to live with from the beginning to have the most efficient application experience.</div>
+        </li>
+        <li class="tip-item">
+          <div class="tip-num">2</div>
+          <div class="tip-body"><strong>Say cheese.</strong> To make your Findigs application process run smoothly, be sure to have handy forms of identification ready to upload when applying. <em>(All IDs must be valid/non-expired.)</em></div>
+        </li>
+        <li class="tip-item">
+          <div class="tip-num">3</div>
+          <div class="tip-body"><strong>Verify your income instantly.</strong> While Findigs offers a variety of options to provide proof of income, the direct bank or payroll link option offers the fastest decision — great if you're interested in moving in same day. When linking your bank, please specify how the name of your employer reflects on your deposits. Please also be sure to input all streams of income, including part-time or freelance work.</div>
+        </li>
+        <li class="tip-item">
+          <div class="tip-num">4</div>
+          <div class="tip-body"><strong>Submitting documents.</strong> Documentation may be asked to verify income, monthly benefits, student aid paperwork, and/or housing calculations. Any and all documents must be submitted in PDF format only — we do not accept screenshots or altered documents.</div>
+        </li>
+        <li class="tip-item">
+          <div class="tip-num">5</div>
+          <div class="tip-body"><strong>Chat away.</strong> Chat with Findigs support if you need help while completing your application. Once your application has been submitted, use the Findigs "Chat" feature under "View Details" to engage with the Findigs team member directly on any open items.</div>
+        </li>
+      </ul>
+      <p class="tips-footer">If you apply to a McKinley apartment home in Orlando, your application will apply to all McKinley apartment homes in Orlando. That means you can enjoy the ease of filling out just one application, and we'll help find your ideal apartment home based on your needs across all of our properties. *Additional application fees may apply in the case of a property-specific special.</p>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
